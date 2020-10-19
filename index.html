@@ -9,7 +9,6 @@
     <!-- CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
         integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
-    <link rel="stylesheet" href="/static/css/styles.css">
     <!-- jQuery and JS bundle w/ Popper.js -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
@@ -17,7 +16,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
         crossorigin="anonymous"></script>
-    <script type="module" src="/static/js/index.js"></script>
 </head>
 
 <body>
@@ -37,6 +35,71 @@
         <button type="button" class="btn btn-primary" id="downloadButton">Download Items</button>
 
     </div>
+    <style>
+        ul {
+            display: table;
+            margin: 0 auto;
+        }
+
+        li {
+            margin-top: 2%;
+        }
+    </style>
+    <script>
+        console.log("JS is loaded");
+
+        var items = [];
+        var count = 0;
+
+        function removeItem(id) {
+            var itemsHtml = document.getElementById("items");
+            var item = document.getElementById(id);
+            itemsHtml.removeChild(item);
+            var itemText = item.textContent.substring(0, item.textContent.length - 7);
+            items = items.filter(i => i != itemText);
+        }
+
+        function addItem() {
+            var item = document.getElementById("itemInput");
+            items.push(item.value);
+            var itemsHtml = document.getElementById("items");
+            var listItem = document.createElement('li');
+            listItem.appendChild(document.createTextNode(item.value + " "));
+            var id = item.value + count;
+            listItem.setAttribute('id', id);
+            var removeButton = document.createElement('button');
+            removeButton.className = "btn btn-danger btn-sm"
+            removeButton.appendChild(document.createTextNode("Remove"));
+            removeButton.addEventListener("click", () => removeItem(id));
+            listItem.appendChild(removeButton);
+            itemsHtml.appendChild(listItem);
+            count++;
+        }
+
+        function downloadAsTxt() {
+            var result = constructItems();
+            var blob = new Blob([result], { type: "octet/stream" });
+            var downloadUrl = window.URL.createObjectURL(blob);
+            var link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = "items.txt";
+            link.click();
+        }
+
+
+        function constructItems() {
+            var result = "";
+            for (var i = 0; i < items.length; i++) {
+                result = result + items[i] + "\n";
+            }
+            return result;
+        }
+
+        document.getElementById("addButton").addEventListener("click", addItem);
+        document.getElementById("downloadButton").addEventListener("click", downloadAsTxt);
+
+
+    </script>
 </body>
 
 </html>
